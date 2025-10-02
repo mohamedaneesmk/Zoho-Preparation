@@ -1,6 +1,8 @@
 public class EquilibriumIndex {
     public static void main(String[] args) {
-        int[] nums = {3,4,9,6,1};
+        // int[] nums = {3,4,9,6,1};
+        // int[] nums = {-7, 1, 5, 2, -4, 3, 0};
+        int[] nums = {1, 2, 3};
         int index = findEquilibriumIndex(nums);
         System.out.println(index); 
     }
