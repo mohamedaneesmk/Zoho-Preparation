@@ -1,56 +1,109 @@
-/*
-    Given an integer array nums sorted in non-decreasing order, remove the duplicates in-place such that each unique element appears only once. The relative order of the elements should be kept the same. Then return the number of unique elements in nums.
+import java.util.*;
 
-    Consider the number of unique elements of nums to be k, to get accepted, you need to do the following things:
-
-    Change the array nums such that the first k elements of nums contain the unique elements in the order they were present in nums initially. The remaining elements of nums are not important as well as the size of nums.
-    Return k.
-    Custom Judge:
-
-    The judge will test your solution with the following code:
-
-    int[] nums = [...]; // Input array
-    int[] expectedNums = [...]; // The expected answer with correct length
-
-    int k = removeDuplicates(nums); // Calls your implementation
-
-    assert k == expectedNums.length;
-    for (int i = 0; i < k; i++) {
-        assert nums[i] == expectedNums[i];
-    }
-    If all assertions pass, then your solution will be accepted.
-
-    
-
-    Example 1:
-
-    Input: nums = [1,1,2]
-    Output: 2, nums = [1,2,_]
-    Explanation: Your function should return k = 2, with the first two elements of nums being 1 and 2 respectively.
-    It does not matter what you leave beyond the returned k (hence they are underscores).
-    Example 2:
-
-    Input: nums = [0,0,1,1,1,2,2,3,3,4]
-    Output: 5, nums = [0,1,2,3,4,_,_,_,_,_]
-    Explanation: Your function should return k = 5, with the first five elements of nums being 0, 1, 2, 3, and 4 respectively.
-    It does not matter what you leave beyond the returned k (hence they are underscores).
- 
- */
 public class RemoveDuplicates {
-    public static void main(String[] args) {
-        int[] nums = {1,1,2};
-        int result = findCount(nums);
-        System.out.println(result);
-    }
-
-    private static int findCount(int[] nums) {
-        int count = 1;
-        for(int i=0;i<nums.length;i++){
-            if(nums[i]!=nums[count-1]){
-                nums[count] = nums[i];
-                count++;
+    
+    public static String removeDuplicates(String input) {
+        // Track normalized characters (lowercase for letters, exact for digits)
+        Set<String> seenNormalized = new HashSet<>();
+        StringBuilder result = new StringBuilder();
+        
+        for (int i = 0; i < input.length(); i++) {
+            char ch = input.charAt(i);
+            
+            // Normalize: lowercase for letters, keep as-is for digits/others
+            String normalized = Character.isLetter(ch) ? 
+                String.valueOf(Character.toLowerCase(ch)) : String.valueOf(ch);
+            
+            if (!seenNormalized.contains(normalized)) {
+                // First occurrence - keep it
+                result.append(ch);
+                seenNormalized.add(normalized);
+            } else {
+                // Duplicate found - find replacement
+                char replacement = findReplacement(ch, seenNormalized);
+                result.append(replacement);
+                
+                // Add replacement to seen set
+                String replacementNormalized = Character.isLetter(replacement) ? 
+                    String.valueOf(Character.toLowerCase(replacement)) : 
+                    String.valueOf(replacement);
+                seenNormalized.add(replacementNormalized);
             }
         }
-        return count;
+        
+        return result.toString();
+    }
+    
+    private static char findReplacement(char original, Set<String> seen) {
+        if (Character.isLetter(original)) {
+            return findLetterReplacement(original, seen);
+        } else if (Character.isDigit(original)) {
+            return findDigitReplacement(original, seen);
+        }
+        return original;
+    }
+    
+    private static char findLetterReplacement(char original, Set<String> seen) {
+        boolean isUpper = Character.isUpperCase(original);
+        char start = isUpper ? 'A' : 'a';
+        char end = isUpper ? 'Z' : 'z';
+        
+        // Start from next character
+        char replacement = (char) (original + 1);
+        
+        // Find next available letter
+        while (replacement <= end) {
+            if (!seen.contains(String.valueOf(Character.toLowerCase(replacement)))) {
+                return replacement;
+            }
+            replacement++;
+        }
+        
+        // Wrap around if needed
+        replacement = start;
+        while (replacement <= end) {
+            if (!seen.contains(String.valueOf(Character.toLowerCase(replacement)))) {
+                return replacement;
+            }
+            replacement++;
+        }
+        
+        return original; // Fallback
+    }
+    
+    private static char findDigitReplacement(char original, Set<String> seen) {
+        int digit = Character.getNumericValue(original);
+        
+        // Try next digits in sequence, wrapping around
+        for (int i = 1; i <= 10; i++) {
+            int nextDigit = (digit + i) % 10;
+            String nextStr = String.valueOf(nextDigit);
+            if (!seen.contains(nextStr)) {
+                return (char) ('0' + nextDigit);
+            }
+        }
+        
+        return original; // Fallback
+    }
+    
+    public static void main(String[] args) {
+        // Test cases
+        String[] testInputs = {"Java1234", "Python1223", "aBuzZ9900"};
+        String[] expectedOutputs = {"Javb1234", "Python1234", "aBuzC9012"};
+        
+        System.out.println("Remove Duplicates with Cascading Replacement");
+        System.out.println("=" .repeat(60));
+        
+        for (int i = 0; i < testInputs.length; i++) {
+            String input = testInputs[i];
+            String output = removeDuplicates(input);
+            String expected = expectedOutputs[i];
+            
+            System.out.println("\nTestcase " + (i + 1) + ":");
+            System.out.println("Input:    " + input);
+            System.out.println("Output:   " + output);
+            System.out.println("Expected: " + expected);
+            System.out.println("Status:   " + (output.equals(expected) ? "PASS ✓" : "FAIL ✗"));
+        }
     }
 }
