@@ -1,29 +1,35 @@
-import java.util.*;
+// Taxi.java
+import java.util.ArrayList;
+import java.util.List;
 
 public class Taxi {
-    public int id;
-    public char currentPoint = 'A'; // Initially all taxis start at point A
-    public int totalEarnings = 0;
-    public List<Booking> bookings = new ArrayList<>();
+    private int taxiId;
+    private char currentSpot;
+    private int freeTime;
+    private int earnings;
+    private List<Booking> bookings;
 
     public Taxi(int id) {
-        this.id = id;
+        this.taxiId = id;
+        this.currentSpot = 'A';
+        this.freeTime = 0;
+        this.earnings = 0;
+        bookings = new ArrayList<>();
     }
 
-    public boolean isAvailable(int requestTime) {
-        if (bookings.isEmpty()) return true;
-        Booking lastBooking = bookings.get(bookings.size() - 1);
-        return lastBooking.dropTime <= requestTime;
+    public boolean isFree(char pickup, int pickupTime) {
+        int travelTime = Math.abs(pickup - currentSpot);
+        return freeTime + travelTime <= pickupTime;
     }
 
-    public int calculateEarnings(char from, char to) {
-        int distance = Math.abs(to - from) * 15;
-        return 100 + Math.max(0, (distance - 5) * 10);
-    }
+    public void assignBookings(Booking b) { bookings.add(b); }
+    public int getTaxiId() { return taxiId; }
+    public char getCurrentSpot() { return currentSpot; }
+    public int getFreeTime() { return freeTime; }
+    public int getEarnings() { return earnings; }
+    public List<Booking> getBookings() { return bookings; }
 
-    public void addBooking(Booking booking) {
-        bookings.add(booking);
-        totalEarnings += booking.amount;
-        currentPoint = booking.to;
-    }
+    public void setFreeTime(int freeTime) { this.freeTime = freeTime; }
+    public void setEarnings(int earnings) { this.earnings = earnings; }
+    public void setCurrentSpot(char s) { this.currentSpot = s; }
 }
