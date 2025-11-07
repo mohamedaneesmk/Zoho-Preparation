@@ -4,8 +4,8 @@ import java.util.List;
 
 class SortEvenOdd {
     public static void main(String[] args) {
-        // int[] nums = { 4, 1, 2, 3 };
-        int[] nums = {2,1};
+        int[] nums = { 4, 1, 2, 3 };
+        // int[] nums = {2,1};
         int[] result = findSortedEvenOdd(nums);
         for(int num:result){
             System.out.print(num+" ");
