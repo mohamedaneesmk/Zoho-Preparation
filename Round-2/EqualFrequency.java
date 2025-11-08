@@ -1,47 +1,50 @@
-import java.util.*;
+public class EqualFrequency {
 
-class EqualFrequency{
     public boolean equalFrequency(String word) {
-        Map<Character, Integer> freqMap = new HashMap<>();
+        int len = word.length();
+        int[] count = new int[26]; // to store frequency of each letter (a-z)
 
         // Step 1: Count frequency of each character
-        for (char c : word.toCharArray()) {
-            freqMap.put(c, freqMap.getOrDefault(c, 0) + 1);
+        for (int i = 0; i < len; ++i) {
+            char c = word.charAt(i);
+            count[c - 'a']++;
         }
 
-        // Step 2: Try removing one occurrence of each character
-        for (char ch : word.toCharArray()) {
-            freqMap.put(ch, freqMap.get(ch) - 1); // remove one occurrence
+        // Step 2: Try removing each character once and check
+        for (int i = 0; i < len; ++i) {
+            char c = word.charAt(i);
+            count[c - 'a']--; // remove this character once
 
-            if (freqMap.get(ch) == 0) {
-                freqMap.remove(ch); // clean up if count becomes 0
+            if (equalCount(count)) {
+                return true; // if after removal all non-zero frequencies are equal
             }
 
-            if (allFrequenciesEqual(freqMap)) {
-                return true; // if all are equal after removal → success
-            }
-
-            // restore original count for next check
-            freqMap.put(ch, freqMap.getOrDefault(ch, 0) + 1);
+            count[c - 'a']++; // restore for next iteration
         }
 
         return false;
     }
 
-    // Step 3: Helper function to check if all frequencies are equal
-    private boolean allFrequenciesEqual(Map<Character, Integer> map) {
-        int freqValue = -1;
-        for (int val : map.values()) {
-            if (freqValue == -1) freqValue = val; // set first value
-            else if (val != freqValue) return false; // mismatch → not equal
+    // Helper function to check if all non-zero frequencies are equal
+    public boolean equalCount(int[] count) {
+        int c = 0;
+
+        for (int i : count) {
+            if (i == 0) continue; // skip unused letters
+            if (c == 0) c = i; // first non-zero frequency
+            else if (c != i) return false; // mismatch found
         }
+
         return true;
     }
 
+    // Main function for quick testing
     public static void main(String[] args) {
-        EqualFrequency s = new EqualFrequency();
+        Solution s = new Solution();
         System.out.println(s.equalFrequency("abcc")); // true
         System.out.println(s.equalFrequency("aazz")); // false
         System.out.println(s.equalFrequency("aabc")); // true
+        System.out.println(s.equalFrequency("abc"));  // true
+        System.out.println(s.equalFrequency("zzzz")); // true
     }
 }
