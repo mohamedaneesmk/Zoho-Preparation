@@ -40,7 +40,7 @@ public class EqualFrequency {
 
     // Main function for quick testing
     public static void main(String[] args) {
-        Solution s = new Solution();
+        EqualFrequency s = new EqualFrequency();
         System.out.println(s.equalFrequency("abcc")); // true
         System.out.println(s.equalFrequency("aazz")); // false
         System.out.println(s.equalFrequency("aabc")); // true
