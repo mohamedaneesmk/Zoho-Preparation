@@ -1,5 +1,3 @@
-// package TicTacToeGame;   // Uncomment this line if you are using a package
-
 import java.util.Scanner;
 
 public class TicTacToe {
